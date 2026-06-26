@@ -1,2 +1,439 @@
-# OctanolWaterDistributionCoefficient
-水分配係数をまとめた表になります。
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>オクタノール-水分配係数 logP 一覧 v5（重複除去版）</title>
+<style>
+:root{
+  --water:#0077b6;--oil:#c05c00;--bg:#f4f8fc;--card:#fff;
+  --text:#0d1b2a;--muted:#5a7a8a;--border:#dce8f0;
+  --chem:#1d4e89;--life:#1b5e20;--nd:#6a1b9a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:var(--bg);color:var(--text);padding:10px;}
+header{text-align:center;padding:18px 10px 10px;}
+header h1{font-size:1.25rem;font-weight:800;}
+header .sub{font-size:.73rem;color:var(--muted);margin-top:4px;line-height:1.55;}
+header .badge{display:inline-block;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:2px 8px;font-size:.65rem;font-weight:700;color:#856404;margin-top:5px;}
+
+.gbar-wrap{margin:12px auto;max-width:680px;padding:0 8px;}
+.gbar{height:11px;border-radius:6px;background:linear-gradient(to right,#0077b6,#90e0ef,#caf0f8,#ffe6c7,#c05c00);}
+.glabels{display:flex;justify-content:space-between;font-size:.63rem;margin-top:3px;}
+.glabels span:first-child{color:var(--water);font-weight:700;}
+.glabels span:last-child{color:var(--oil);font-weight:700;}
+
+.tabs{display:flex;gap:8px;justify-content:center;margin:12px 0 8px;flex-wrap:wrap;}
+.tab{border:2px solid var(--border);background:#fff;padding:5px 14px;border-radius:18px;font-size:.76rem;font-weight:700;cursor:pointer;transition:all .14s;}
+.tab.on-all{background:var(--text);color:#fff;border-color:var(--text);}
+.tab.on-chem{background:var(--chem);color:#fff;border-color:var(--chem);}
+.tab.on-life{background:var(--life);color:#fff;border-color:var(--life);}
+
+.catbar{max-width:960px;margin:4px auto 8px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
+.cb{border:none;padding:3px 8px;border-radius:12px;font-size:.67rem;font-weight:700;cursor:pointer;background:#e2eaf0;color:var(--muted);transition:all .12s;}
+.cb.on{color:#fff;}
+
+.statrow{text-align:center;font-size:.7rem;color:var(--muted);margin-bottom:5px;}
+.statrow b{color:var(--text);}
+
+.shdr{max-width:960px;margin:8px auto 3px;padding:7px 12px;border-radius:7px;font-size:.8rem;font-weight:800;display:flex;align-items:center;gap:6px;}
+.shdr.chem{background:#d6e4f0;color:var(--chem);}
+.shdr.life{background:#d8f3dc;color:var(--life);}
+.shdr.nd{background:#efe0fb;color:var(--nd);}
+.shdr.hide{display:none;}
+
+.tw{max-width:960px;margin:0 auto 14px;overflow-x:auto;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.07);background:#fff;}
+table{width:100%;border-collapse:collapse;font-size:.76rem;}
+thead tr{color:#fff;}
+thead.ch{background:var(--chem);}
+thead.lh{background:var(--life);}
+thead.nh{background:var(--nd);}
+thead th{padding:8px 7px;text-align:left;font-size:.66rem;font-weight:700;letter-spacing:.04em;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:hover{background:#eaf4ff;}
+tbody tr.hide{display:none;}
+td{padding:6px 7px;vertical-align:middle;}
+td.rk{color:var(--muted);font-size:.64rem;width:22px;}
+td.nm{font-weight:700;min-width:120px;}
+td.nm small{display:block;font-size:.61rem;color:var(--muted);font-weight:400;}
+.lc{min-width:120px;}
+.lv{font-variant-numeric:tabular-nums;font-weight:800;font-size:.82rem;}
+.lb{height:4px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden;}
+.lf{height:100%;border-radius:2px;}
+.tgs{display:flex;flex-wrap:wrap;gap:2px;}
+.t{font-size:.57rem;font-weight:700;padding:1px 4px;border-radius:7px;white-space:nowrap;}
+.t-蛍光{background:#fef0e2;color:#c75e0a;border:1px solid #f4a261;}
+.t-色素・食紅{background:#fdecea;color:#b71c1c;border:1px solid #e63946;}
+.t-色素{background:#fbe9ff;color:#7b1fa2;border:1px solid #ba68c8;}
+.t-食品{background:#e0f5f2;color:#1a7568;border:1px solid #2a9d8f;}
+.t-指示薬{background:#fef9e2;color:#7a6200;border:1px solid #e9c46a;}
+.t-有機溶媒{background:#ece5ff;color:#5c0fd8;border:1px solid #8338ec;}
+.t-生体色素{background:#dbeaf5;color:#1e4d6b;border:1px solid #457b9d;}
+.t-栄養素{background:#e8f8e8;color:#1b5e20;border:1px solid #4caf50;}
+.t-界面活性剤{background:#fde8df;color:#b5400a;border:1px solid #e76f51;}
+.t-脂肪酸{background:#f5e8d8;color:#7a3a0a;border:1px solid #a8551a;}
+.t-気体{background:#e8e9ea;color:#3d4044;border:1px solid #9ca3af;}
+.t-無機塩{background:#eceff1;color:#37474f;border:1px solid #90a4ae;}
+.t-アルコール{background:#ede7f6;color:#4a148c;border:1px solid #7b1fa2;}
+.t-ハロゲン系{background:#fff3e0;color:#e65100;border:1px solid #fb8c00;}
+.t-極性非プロトン{background:#e3f2fd;color:#0d47a1;border:1px solid #42a5f5;}
+.t-芳香族{background:#fce4ec;color:#880e4f;border:1px solid #f06292;}
+.t-炭化水素{background:#e8f5e9;color:#2e7d32;border:1px solid #66bb6a;}
+
+td.nc{font-size:.64rem;color:var(--muted);max-width:160px;line-height:1.4;}
+td.rc{font-size:.57rem;color:var(--muted);min-width:110px;line-height:1.4;}
+td.rc a{color:#0060a0;text-decoration:none;display:block;word-break:break-all;}
+td.rc a:hover{text-decoration:underline;}
+td.rc .rs{font-size:.55rem;color:#aaa;}
+
+.fc{max-width:960px;margin:14px auto;background:#fffdf0;border:1px solid #e9c46a;border-radius:10px;padding:12px 14px;}
+.fc h3{font-size:.8rem;font-weight:800;color:#6d4c00;margin-bottom:8px;border-bottom:1px solid #e9c46a;padding-bottom:5px;}
+.fc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fc-box{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 10px;}
+.fc-box h4{font-size:.7rem;font-weight:700;color:#444;margin-bottom:5px;border-bottom:1px solid #eee;padding-bottom:3px;}
+.fc-item{font-size:.64rem;padding:3px 0;border-bottom:1px solid #f5f5f5;display:grid;grid-template-columns:1fr auto;gap:8px;}
+.fc-item:last-child{border-bottom:none;}
+.ok{color:#2e7d32;font-weight:700;}
+.fix{color:#1565c0;font-weight:700;}
+.warn{color:#e65100;font-weight:700;}
+
+.refs{max-width:960px;margin:14px auto 8px;background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.refs h2{font-size:.83rem;font-weight:800;margin-bottom:9px;border-bottom:2px solid var(--border);padding-bottom:6px;}
+.refs ol{list-style:none;}
+.refs li{font-size:.67rem;padding:4px 0;border-bottom:1px solid var(--border);line-height:1.6;}
+.refs li:last-child{border-bottom:none;}
+.refs li b{color:var(--water);margin-right:3px;}
+.refs li a{color:#0060a0;word-break:break-all;}
+.refs .src-type{display:inline-block;font-size:.58rem;font-weight:700;padding:1px 5px;border-radius:4px;margin-right:4px;}
+.refs .jp{background:#ffebee;color:#b71c1c;border:1px solid #ef9a9a;}
+.refs .etc{background:#e3f2fd;color:#0d47a1;border:1px solid #90caf9;}
+
+footer{text-align:center;font-size:.6rem;color:var(--muted);padding:10px;margin-top:5px;line-height:1.6;}
+@media(max-width:600px){.fc-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>オクタノール-水分配係数（logP / logPow）一覧</h1>
+  <div class="sub">
+    親水性（logP 低）→ 疎水性（logP 高）の順 ／ 一般名または商品名を主表示<br>
+    単一物質を原則とし、混合物（例：オリーブオイル、白ワセリン）や群名的項目（例：脂肪酸Na（石鹸））は除外<br>
+    重複掲載なし。代表物質は「データなし」欄へ集約
+  </div>
+  <div class="badge">✅ 重複整理・混合物除外・データなし集約済み</div>
+</header>
+
+<div class="gbar-wrap">
+  <div class="gbar"></div>
+  <div class="glabels"><span>← 親水性（水に溶けやすい）</span><span>疎水性・脂溶性（油に溶けやすい）→</span></div>
+</div>
+
+<div class="tabs">
+  <button class="tab on-all" onclick="setTab('all',this)">🔷 すべて</button>
+  <button class="tab" onclick="setTab('chem',this)">🔬 化学科で使う溶媒・試薬</button>
+  <button class="tab" onclick="setTab('life',this)">🏠 一般生活で見る物質</button>
+</div>
+
+<div class="catbar" id="catbar"></div>
+<div class="statrow">表示中 <b id="vc">0</b> 件 ／ 全 <b id="tc">0</b> 件</div>
+
+<div class="shdr chem" id="hc">🔬 化学科・研究室で使う溶媒・試薬</div>
+<div class="tw" id="tc-wrap">
+<table>
+  <thead class="ch"><tr>
+    <th>#</th><th>物質名</th><th style="min-width:120px">logPow 値</th>
+    <th>カテゴリ</th><th>特徴・備考</th><th>主な出典</th>
+  </tr></thead>
+  <tbody id="tb-c"></tbody>
+</table>
+</div>
+
+<div class="shdr life" id="hl">🏠 一般生活・身近な場面で見る物質</div>
+<div class="tw" id="tl-wrap">
+<table>
+  <thead class="lh"><tr>
+    <th>#</th><th>物質名</th><th style="min-width:120px">logPow 値</th>
+    <th>カテゴリ</th><th>特徴・備考</th><th>主な出典</th>
+  </tr></thead>
+  <tbody id="tb-l"></tbody>
+</table>
+</div>
+
+<div class="shdr nd" id="hn">📝 データなし（代表物質として整理したが採用値未確定）</div>
+<div class="tw" id="tn-wrap">
+<table>
+  <thead class="nh"><tr>
+    <th>#</th><th>物質名</th><th>扱い</th><th>理由・備考</th><th>主な出典・メモ</th>
+  </tr></thead>
+  <tbody id="tb-n"></tbody>
+</table>
+</div>
+
+<div class="fc">
+  <h3>✅ 整理・修正方針</h3>
+  <div class="fc-grid">
+    <div class="fc-box">
+      <h4>【削除・統合】不要項目と重複の整理</h4>
+      <div class="fc-item"><span>オリーブオイル</span><span class="fix">混合物のため削除</span></div>
+      <div class="fc-item"><span>白ワセリン</span><span class="fix">混合物のため削除</span></div>
+      <div class="fc-item"><span>脂肪酸Na（石鹸）</span><span class="fix">群名・混合的性格のため削除</span></div>
+      <div class="fc-item"><span>エタノール／エタノール（消毒用）</span><span class="fix">1件に統合</span></div>
+      <div class="fc-item"><span>パルミチン酸・オレイン酸・ステアリン酸</span><span class="fix">二重掲載を解消</span></div>
+      <div class="fc-item"><span>IPA</span><span class="fix">重複行を削除済み</span></div>
+    </div>
+    <div class="fc-box">
+      <h4>【データなし欄】代表物質の扱い</h4>
+      <div class="fc-item"><span>アントシアニン</span><span class="fix">代表：シアニジン</span></div>
+      <div class="fc-item"><span>クロロフィル</span><span class="fix">代表：クロロフィルa</span></div>
+      <div class="fc-item"><span>キニーネ</span><span class="fix">データなし欄へ移動</span></div>
+      <div class="fc-item"><span>ドデシル硫酸Na（SDS）</span><span class="ok">独立項目として残す</span></div>
+      <div class="fc-item"><span>フルオレセイン</span><span class="fix">ウラニン（フルオレセイン）へ統一</span></div>
+      <div class="fc-item"><span>データなし項目</span><span class="ok">同一箇所に集約</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="refs">
+  <h2>📚 参考文献・出典一覧（掲載項目から自動抽出）</h2>
+  <ol id="ref-list"></ol>
+</div>
+
+<footer>
+  単一物質を原則として掲載。混合物（オリーブオイル、白ワセリン）・群名項目（脂肪酸Na（石鹸））は除外。<br>
+  データなし項目は通常一覧に混ぜず、代表物質名を付して別欄に集約。<br>
+  この版では IPA の重複行を削除し、重複なし版として整備。
+</footer>
+
+<script>
+const MI=-8, MX=25;
+function bc(v){
+  const t=Math.max(0,Math.min(1,(v-MI)/(MX-MI)));
+  if(t<.5){
+    const u=t/.5;
+    return `rgb(${Math.round(u*230)},${Math.round(119+u*105)},${Math.round(182+u*57)})`;
+  }
+  const u=(t-.5)/.5;
+  return `rgb(${Math.round(144+u*80)},${Math.round(224-u*101)},${Math.round(239-u*182)})`;
+}
+function bw(v){return Math.max(2,Math.max(0,Math.min(1,(v-MI)/(MX-MI)))*100);}
+function nc(v){
+  if(v>3)return '#c05c00';
+  if(v>0)return '#e07b39';
+  if(v>-1)return '#1a9e78';
+  return '#0077b6';
+}
+
+const DATA = [
+{s:'c',n:'炭酸カリウム',b:'K₂CO₃・無機塩基試薬',v:-6.0,d:'≪ −5（推定）',t:['無機塩'], note:'強塩基。有機合成の塩基触媒。イオン性のためlogPow概念外', ref:{l:'⚠ 推定値 / EPA EPI Suite',u:'https://www.epa.gov/tsca-screening-tools'}},
+{s:'c',n:'アンモニア',b:'NH₃・塩基性気体',v:-2.66,d:'−2.66',t:['気体'], note:'水に非常によく溶ける塩基性気体。前回誤記修正済み', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/7664-41-7.html'}},
+{s:'c',n:'DMSO',b:'ジメチルスルホキシド',v:-1.35,d:'−1.35',t:['有機溶媒','極性非プロトン'], note:'万能極性溶媒。凍結保護剤。皮膚透過性あり', ref:{l:'DMSO SDS',u:'http://www.st.rim.or.jp/~shw/MSDS/04282250.pdf'}},
+{s:'c',n:'DMF',b:'N,N-ジメチルホルムアミド',v:-0.87,d:'−0.87',t:['有機溶媒','極性非プロトン'], note:'高沸点極性溶媒。有機合成・ペプチド合成。⚠毒性', ref:{l:'ICSC 日本語版',u:'https://chemicalsafety.ilo.org/dyn/icsc/showcard.display?p_card_id=0457&p_version=2&p_lang=ja'}},
+{s:'c',n:'メタノール',b:'MeOH・CH₃OH',v:-0.74,d:'−0.82〜−0.66',t:['有機溶媒','アルコール'], note:'最小アルコール。⚠毒性（視神経障害）', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/67-56-1.html'}},
+{s:'c',n:'酢酸',b:'AcOH・CH₃COOH',v:-0.17,d:'−0.17',t:['有機溶媒','有機酸'], note:'弱酸。HPLC移動相添加剤。氷酢酸は純品', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/64-19-7.html'}},
+{s:'c',n:'エタノール',b:'EtOH・C₂H₅OH',v:-0.31,d:'−0.31',t:['有機溶媒','アルコール'], note:'最汎用アルコール。研究室溶媒・消毒用・抽出用途などに広く使用', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/64-17-5.html'}},
+{s:'c',n:'IPA',b:'イソプロパノール・2-プロパノール',v:0.05,d:'+0.05',t:['有機溶媒','アルコール'], note:'消毒や洗浄に広く使われる。分岐構造でn-プロパノールよりやや疎水', ref:{l:'ENEOS SDS',u:'https://www.eneos.co.jp/business/sds/pdf/91096_r.pdf'}},
+{s:'c',n:'ジメチルエーテル',b:'DME・CH₃OCH₃',v:0.10,d:'+0.10',t:['有機溶媒','気体'], note:'常温では気体。スプレー缶噴射剤・抽出補助', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/115-10-6.html'}},
+{s:'c',n:'トリメチルアミン',b:'TMA・(CH₃)₃N・魚臭成分',v:0.16,d:'+0.16',t:['気体','食品'], note:'魚臭の原因。塩基性。酸処理で消臭しやすい', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/75-50-3.html'}},
+{s:'c',n:'硫化水素',b:'H₂S・腐卵臭の気体',v:0.23,d:'+0.23',t:['気体'], note:'腐卵臭をもつ有毒気体。温泉・嫌気環境で発生', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/7783-06-4.html'}},
+{s:'c',n:'塩化水素',b:'HCl・刺激性気体',v:0.25,d:'+0.25',t:['気体'], note:'刺激性・腐食性の強い気体。水に溶けると塩酸', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/7647-01-0.html'}},
+{s:'c',n:'1-プロパノール',b:'PrOH・n-C₃H₇OH',v:0.25,d:'+0.25',t:['有機溶媒','アルコール'], note:'炭素鎖延長でエタノールより疎水', ref:{l:'昭和化学 SDS',u:'http://www.showa-chem.com/MSDS/16525250.pdf'}},
+{s:'c',n:'アセチレン',b:'HC≡CH',v:0.37,d:'+0.37',t:['気体','炭化水素'], note:'常温気体。溶接・有機合成原料', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/1400.html'}},
+{s:'c',n:'水素',b:'H₂・最小分子の気体',v:0.45,d:'+0.45',t:['気体'], note:'最小分子の可燃性気体。還元雰囲気・燃料用途', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/1333-74-0.html'}},
+{s:'c',n:'酢酸エチル',b:'EtOAc・CH₃COOC₂H₅',v:0.73,d:'+0.73',t:['有機溶媒'], note:'TLC展開溶媒の定番。中程度極性。果実様の香り', ref:{l:'昭和化学 SDS',u:'http://www.showa-chem.com/MSDS/05047150.pdf'}},
+{s:'c',n:'二酸化炭素',b:'CO₂・常温気体',v:0.83,d:'+0.83',t:['気体'], note:'炭酸飲料・ドライアイス・培養系でも重要', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/124-38-9.html'}},
+{s:'c',n:'ジエチルエーテル',b:'Et₂O・C₂H₅OC₂H₅',v:0.89,d:'+0.89',t:['有機溶媒'], note:'抽出・再結晶の定番。⚠高引火性。過酸化物生成に注意', ref:{l:'ICSC 日本語版',u:'https://chemicalsafety.ilo.org/dyn/icsc/showcard.display?p_card_id=0355&p_version=1&p_lang=ja'}},
+{s:'c',n:'メタン',b:'CH₄・天然ガス主成分',v:1.09,d:'+1.09',t:['気体','炭化水素'], note:'最小アルカン。温室効果ガスとしても重要', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/1402.html'}},
+{s:'c',n:'エチレン',b:'CH₂=CH₂・植物ホルモン',v:1.13,d:'+1.13',t:['気体','炭化水素'], note:'植物熟成ホルモン。石油化学の重要原料', ref:{l:'出光 SDS',u:'https://www.idemitsu.com/jp/sds/bchem/ETHYLENE_JP07_JP.pdf'}},
+{s:'c',n:'ドデシル硫酸Na（SDS）',b:'ラウリル硫酸Na・陰イオン界面活性剤',v:1.60,d:'+1.60',t:['界面活性剤'], note:'SDS-PAGE変性剤。界面活性剤として独立掲載', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/151-21-3.html'}},
+{s:'c',n:'エタン',b:'C₂H₆',v:1.81,d:'+1.81',t:['気体','炭化水素'], note:'天然ガス成分。炭素数増加でlogPが増える例', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/1403.html'}},
+{s:'c',n:'安息香酸',b:'C₆H₅COOH',v:1.88,d:'+1.88',t:['有機溶媒','有機酸'], note:'弱酸。防腐剤原料。logP教材実験にも使いやすい', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/65-85-0.html'}},
+{s:'c',n:'ローダミンB',b:'蛍光色素',v:1.95,d:'+1.95',t:['蛍光','色素'], note:'カチオン性蛍光色素。細胞染色でも知られる', ref:{l:'米山薬品 SDS',u:'https://www.yone-yama.co.jp/shiyaku/msds/pdfdata/05156.pdf'}},
+{s:'c',n:'クロロホルム',b:'クロロフォルム・CHCl₃',v:1.97,d:'+1.97',t:['有機溶媒','ハロゲン系'], note:'脂質抽出・溶媒用途で重要。⚠毒性', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/67-66-3.html'}},
+{s:'c',n:'ベンゼン',b:'C₆H₆',v:2.13,d:'+2.13',t:['有機溶媒','芳香族'], note:'代表的芳香族炭化水素。⚠発がん性', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/71-43-2.html'}},
+{s:'c',n:'プロパン',b:'C₃H₈・LPG主成分',v:2.35,d:'+2.35',t:['気体','炭化水素'], note:'家庭・業務用燃料で身近', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/1404.html'}},
+{s:'c',n:'フェノールフタレイン',b:'pH指示薬',v:2.40,d:'+2.4',t:['指示薬'], note:'pH 8.2〜10 で無色→赤紫', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/77-09-8.html'}},
+{s:'c',n:'ヨウ素',b:'I₂・ハロゲン単体',v:2.49,d:'+2.49',t:['ハロゲン系'], note:'黒紫色結晶。昇華性があり、デンプン反応でも有名', ref:{l:'NIES KIS-Plus',u:'https://www.nies.go.jp/kisplus/dtl/chem/DOK00997'}},
+{s:'c',n:'ジクロロメタン',b:'DCM・CH₂Cl₂',v:1.25,d:'+1.25',t:['有機溶媒','ハロゲン系'], note:'高密度・低引火性。有機合成抽出の定番', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/75-09-2.html'}},
+{s:'c',n:'フェノール',b:'石炭酸・C₆H₅OH',v:1.46,d:'+1.46',t:['有機溶媒','有機酸'], note:'弱酸。DNA/RNA抽出などで使用。⚠腐食性', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/0061.html'}},
+{s:'c',n:'トルエン',b:'C₆H₅CH₃',v:2.73,d:'+2.73',t:['有機溶媒','芳香族'], note:'塗料・接着剤溶媒として重要', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/108-88-3.html'}},
+{s:'c',n:'イソブタン',b:'i-C₄H₁₀・2-メチルプロパン',v:2.80,d:'+2.8',t:['気体','炭化水素'], note:'分岐異性体。冷媒やエアゾール用途', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/75-28-5.html'}},
+{s:'c',n:'n-ブタン',b:'C₄H₁₀・ライター燃料',v:2.89,d:'+2.89',t:['気体','炭化水素'], note:'ライター・カセットコンロ燃料', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/106-97-8.html'}},
+{s:'c',n:'BTB',b:'ブロモチモールブルー・pH指示薬',v:3.69,d:'+3.69',t:['指示薬'], note:'酸→黄、中性→緑、塩基→青', ref:{l:'富士フイルム和光純薬 SDS / PubChem CID 9908',u:'https://labchem-wako.fujifilm.com'}},
+{s:'c',n:'n-ヘキサン',b:'n-C₆H₁₄',v:3.90,d:'+3.9',t:['有機溶媒','炭化水素'], note:'非極性溶媒。油脂抽出。⚠高引火性・神経毒性', ref:{l:'富士フイルム和光純薬 SDS',u:'https://labchem-wako.fujifilm.com/sds/W01W0108-0041JGHEJP.pdf'}},
+{s:'c',n:'メチレンブルー',b:'チアジン系色素',v:5.85,d:'+5.85',t:['色素'], note:'染色・酸化還元指示などで知られる色素', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/61-73-4.html'}},
+{s:'c',n:'ウラニン（フルオレセイン）',b:'蛍光試薬・pH指示薬',v:-0.67,d:'−0.67',t:['蛍光','指示薬'], note:'蛍光pH指示薬。名称を統一', ref:{l:'昭和化学 SDS',u:'http://www.showa-chem.com/MSDS/06019350.pdf'}},
+{s:'l',n:'食塩',b:'NaCl・塩化ナトリウム',v:-2.96,d:'−2.96',t:['食品','無機塩'], note:'完全イオン性。logPowは非電解質向きの概念', ref:{l:'NIES KIS-Plus',u:'https://www.nies.go.jp/kisplus/dtl/chem/SZY01054'}},
+{s:'l',n:'青色1号',b:'ブリリアントブルーFCF・食用青色素',v:-6.4,d:'< −6.4',t:['色素・食紅','食品'], note:'非常に親水性が強い色素', ref:{l:'ChemicalBook SDS',u:'https://www.chemicalbook.com/msds/jp/3844-45-9.htm'}},
+{s:'l',n:'ピラニン',b:'1-ヒドロキシピレン-3,6,8-トリスルホン酸ナトリウム',v:-3.97,d:'−3.97（計算値）',t:['蛍光','色素'], note:'多スルホン酸基をもつ高親水性蛍光色素', ref:{l:'ChemicalBook',u:'https://m.chemicalbook.com/ChemicalProductProperty_JP_CB9402700.htm'}},
+{s:'l',n:'赤色102号',b:'ニューコクシン・食用赤色素',v:-2.267,d:'−2.267',t:['色素・食紅','食品'], note:'多スルホン酸基で強親水性', ref:{l:'Carl Roth SDS',u:'https://www.carlroth.com/medias/SDB-1XTX-DE-EN.pdf?context=bWFzdGVyfHNlY3VyaXR5RGF0YXNoZWV0c3wyNTI4MTN8YXBwbGljYXRpb24vcGRmfGFETXlMMmhsWXk4NU1qQTJNemMyT1RVMU9UTTBMMU5FUWw4eFdGUllYMFJGWDBWT0xuQmtaZ3xkMmQ0MWMyMzJjNDI5YzU2ZDllOGU5NzlkYzJhOTc0YWUxMjIzZDgzYzk0MDhlNTk0ZWVmMDhkYjkyMWRhOWRl'}},
+{s:'l',n:'ビタミンC',b:'L-アスコルビン酸',v:-2.15,d:'−2.15',t:['栄養素','食品'], note:'水溶性ビタミン。多OH基で強い親水性', ref:{l:'ICSC 日本語版',u:'https://chemicalsafety.ilo.org/dyn/icsc/showcard.display?p_lang=ja&p_card_id=0379&p_version=2'}},
+{s:'l',n:'黄色4号',b:'タートラジン・食用黄色素',v:-1.572,d:'−1.572（計算値）',t:['色素・食紅','食品'], note:'E102。黄色系食品に使用', ref:{l:'Carl Roth SDS',u:'https://www.carlroth.com/medias/SDB-2982-AU-EN.pdf?context=bWFzdGVyfHNlY3VyaXR5RGF0YXNoZWV0c3wyMzg0NDh8YXBwbGljYXRpb24vcGRmfGFESmlMMmhsWXk4NU1UZ3lPVGt4TURnNU5qazBMMU5FUWw4eU9UZ3lYMEZWWDBWT0xuQmtaZ3xhOThkNjYwNGY0NDFjZmFkYjlmZjdiYWE5MDJjMmY2OTg3ZGE5ZDFjODVmN2NiNzkzMzJlZTM5NzRlNzY4NDRj'}},
+{s:'l',n:'ビタミンB2',b:'リボフラビン・黄色蛍光',v:-1.46,d:'−1.46',t:['栄養素','食品','蛍光'], note:'栄養ドリンクの黄色。蛍光を示す', ref:{l:'ICSC 日本語版',u:'https://chemicalsafety.ilo.org/dyn/icsc/showcard.display?p_card_id=1454&p_version=2&p_lang=ja'}},
+{s:'l',n:'カフェイン',b:'コーヒー・お茶・栄養ドリンク',v:-0.07,d:'−0.07',t:['食品'], note:'ほぼ境界値。脳血液関門通過性の議論でも有名', ref:{l:'ICSC 日本語版',u:'https://chemicalsafety.ilo.org/dyn/icsc/showcard.display?p_card_id=0405&p_version=2&p_lang=ja'}},
+{s:'l',n:'1-メントール',b:'ハッカ・冷感物質',v:3.30,d:'+3.3',t:['食品','有機溶媒'], note:'TRPM8受容体で冷感。皮膚浸透性が高い', ref:{l:'職場のあんぜんサイト',u:'https://anzeninfo.mhlw.go.jp/anzen/gmsds/2216-51-5.html'}},
+{s:'l',n:'カプサイシン',b:'唐辛子・辛味成分',v:3.04,d:'+3.04',t:['食品','生体色素'], note:'TRPV1受容体に作用。脂溶性があり油脂と相性がよい', ref:{l:'ChemicalBook SDS',u:'https://www.chemicalbook.com/msds/jp/404-86-4.htm'}},
+{s:'l',n:'パルミチン酸',b:'C16:0・パーム油・バター成分',v:7.17,d:'+7.17',t:['脂肪酸','食品'], note:'パーム油・バターの主要成分。研究・生体・食品の橋渡し的物質', ref:{l:'ChemicalBook SDS',u:'https://www.chemicalbook.com/msds/jp/57-10-3.pdf'}},
+{s:'l',n:'オレイン酸',b:'C18:1・オリーブオイル主成分',v:7.64,d:'+7.64',t:['脂肪酸','食品'], note:'オリーブオイルの主要脂肪酸。液状不飽和脂肪酸', ref:{l:'富士フイルム和光純薬 SDS',u:'https://labchem-wako.fujifilm.com/sds/W01W0115-0343JGHEJP.pdf'}},
+{s:'l',n:'ステアリン酸',b:'C18:0・石鹸・化粧品原料',v:8.23,d:'+8.23',t:['脂肪酸','食品'], note:'化粧品・石鹸原料としても重要な飽和脂肪酸', ref:{l:'ARK-CHEM SDS',u:'https://ark-chem.co.jp/download/5277/%E3%82%B9%E3%83%86%E3%82%A2%E3%83%AA%E3%83%B3%E9%85%B81865%20SDS%20%E6%97%A5%E6%9C%AC%E8%AA%9E%20JIS%20Z%207252%E3%80%817253%EF%BC%9A2019%2020241210.pdf'}}
+];
+
+const NODATA = [
+{s:'l',n:'キニーネ',b:'トニックウォーター成分・アルカロイド', status:'データなし', note:'今回の採用ルールでは掲載用の採用値を未確定とし、データなし欄へ集約', ref:{l:'富士フイルム和光純薬 SDS',u:'https://labchem-wako.fujifilm.com/sds/W01W0117-0038JGHEJP.pdf'}},
+{s:'l',n:'シアニジン',b:'アントシアニン代表（グルコースなし）', status:'データなし', note:'アントシアニン群ではなく代表化合物として整理。ただし今回の採用値は未確定', ref:{l:'今回調査時点で採用URL未設定',u:''}},
+{s:'l',n:'クロロフィルa',b:'クロロフィル代表', status:'データなし', note:'クロロフィル群ではなく代表化合物として整理。ただし今回の採用値は未確定', ref:{l:'今回調査時点で採用URL未設定',u:''}}
+];
+
+const chemD = DATA.filter(x=>x.s==='c').sort((a,b)=>a.v-b.v);
+const lifeD = DATA.filter(x=>x.s==='l').sort((a,b)=>a.v-b.v);
+
+const catSet = new Set();
+DATA.forEach(d=>d.t.forEach(t=>catSet.add(t)));
+
+const catColor = {
+  '蛍光':'#f4a261','色素・食紅':'#e63946','色素':'#ba68c8','食品':'#2a9d8f','指示薬':'#d4a017',
+  '有機溶媒':'#8338ec','生体色素':'#457b9d','栄養素':'#4caf50','界面活性剤':'#e76f51',
+  '脂肪酸':'#a8551a','気体':'#6c757d','無機塩':'#78909c','アルコール':'#6a4c93',
+  '有機酸':'#ab47bc','ハロゲン系':'#fb8c00','極性非プロトン':'#0096c7','芳香族':'#f06292','炭化水素':'#52b788'
+};
+
+const cb=document.getElementById('catbar');
+const aBtn=document.createElement('button');
+aBtn.className='cb on';
+aBtn.textContent='すべて';
+aBtn.dataset.c='all';
+aBtn.style.background='#0d1b2a';
+aBtn.style.color='#fff';
+aBtn.onclick=()=>filterCat('all',aBtn);
+cb.appendChild(aBtn);
+
+[...catSet].sort().forEach(c=>{
+  const b=document.createElement('button');
+  b.className='cb';
+  b.textContent=c;
+  b.dataset.c=c;
+  b.onclick=()=>filterCat(c,b);
+  cb.appendChild(b);
+});
+
+function makeRow(d,i){
+  const tr=document.createElement('tr');
+  tr.dataset.sec=d.s;
+  tr.dataset.tags=d.t.join(',');
+  const th=d.t.map(t=>`<span class="t t-${t}">${t}</span>`).join('');
+  const refH=d.ref.u?`<a href="${d.ref.u}" target="_blank">${d.ref.l}</a>`:`<span class="rs">${d.ref.l}</span>`;
+  const p=bw(d.v), c=bc(d.v), n=nc(d.v);
+  tr.innerHTML=`<td class="rk">${i+1}</td>
+    <td class="nm">${d.n}<small>${d.b}</small></td>
+    <td class="lc"><span class="lv" style="color:${n}">${d.d}</span>
+      <div class="lb"><div class="lf" style="width:${p}%;background:${c}"></div></div></td>
+    <td><div class="tgs">${th}</div></td>
+    <td class="nc">${d.note}</td>
+    <td class="rc">${refH}</td>`;
+  return tr;
+}
+
+function makeNoDataRow(d,i){
+  const tr=document.createElement('tr');
+  tr.dataset.sec='n';
+  const refH=d.ref.u?`<a href="${d.ref.u}" target="_blank">${d.ref.l}</a>`:`<span class="rs">${d.ref.l}</span>`;
+  tr.innerHTML=`<td class="rk">${i+1}</td>
+    <td class="nm">${d.n}<small>${d.b}</small></td>
+    <td class="lc"><span class="lv" style="color:#6a1b9a">${d.status}</span></td>
+    <td class="nc">${d.note}</td>
+    <td class="rc">${refH}</td>`;
+  return tr;
+}
+
+const tbc=document.getElementById('tb-c');
+const tbl=document.getElementById('tb-l');
+const tbn=document.getElementById('tb-n');
+
+chemD.forEach((d,i)=>tbc.appendChild(makeRow(d,i)));
+lifeD.forEach((d,i)=>tbl.appendChild(makeRow(d,i)));
+NODATA.forEach((d,i)=>tbn.appendChild(makeNoDataRow(d,i)));
+
+document.getElementById('tc').textContent=DATA.length;
+document.getElementById('vc').textContent=DATA.length;
+
+let curSec='all', curCat='all';
+
+function setTab(sec,btn){
+  curSec=sec;
+  document.querySelectorAll('.tab').forEach(b=>b.className='tab');
+  btn.className='tab on-'+sec;
+
+  document.getElementById('hc').classList.toggle('hide',sec==='life');
+  document.getElementById('tc-wrap').style.display=sec==='life'?'none':'';
+
+  document.getElementById('hl').classList.toggle('hide',sec==='chem');
+  document.getElementById('tl-wrap').style.display=sec==='chem'?'none':'';
+
+  const showNoData = sec!=='chem';
+  document.getElementById('hn').classList.toggle('hide',!showNoData);
+  document.getElementById('tn-wrap').style.display=showNoData?'':'none';
+
+  applyFilters();
+}
+
+function filterCat(cat,btn){
+  curCat=cat;
+  document.querySelectorAll('.cb').forEach(b=>{
+    b.classList.remove('on');
+    b.style.background='';
+    b.style.color='';
+  });
+  btn.classList.add('on');
+  if(cat==='all'){
+    btn.style.background='#0d1b2a';
+    btn.style.color='#fff';
+  }else{
+    btn.style.background=catColor[cat]||'#555';
+    btn.style.color='#fff';
+  }
+  applyFilters();
+}
+
+function applyFilters(){
+  let v=0;
+  document.querySelectorAll('#tb-c tr,#tb-l tr').forEach(tr=>{
+    const sec=tr.dataset.sec;
+    const tags=(tr.dataset.tags||'').split(',');
+    let show=true;
+
+    if(curSec==='chem' && sec!=='c') show=false;
+    if(curSec==='life' && sec!=='l') show=false;
+    if(curCat!=='all' && !tags.includes(curCat)) show=false;
+
+    tr.classList.toggle('hide',!show);
+    if(show) v++;
+  });
+  document.getElementById('vc').textContent=v;
+}
+
+function buildRefs(){
+  const src = [...DATA, ...NODATA];
+  const seen = new Set();
+  const ol = document.getElementById('ref-list');
+  let idx = 1;
+
+  src.forEach(d=>{
+    const key = `${d.ref.l}__${d.ref.u}`;
+    if(seen.has(key)) return;
+    seen.add(key);
+
+    const li = document.createElement('li');
+    const type = d.ref.u && d.ref.u.includes('anzeninfo.mhlw.go.jp') ? 'jp' : 'etc';
+    const typeLabel = d.ref.u && d.ref.u.includes('anzeninfo.mhlw.go.jp') ? '日本語' : '資料';
+    li.innerHTML = `<b>[${idx}]</b><span class="src-type ${type}">${typeLabel}</span>${d.ref.u ? `<a href="${d.ref.u}" target="_blank">${d.ref.l}</a>` : d.ref.l}`;
+    ol.appendChild(li);
+    idx++;
+  });
+}
+
+buildRefs();
+setTab('all',document.querySelector('.tab.on-all'));
+</script>
+</body>
+</html>
+
