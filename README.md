@@ -1,0 +1,2 @@
+# OctanolWaterDistributionCoefficient
+水分配係数をまとめた表になります。
